@@ -1,17 +1,22 @@
 package com.example.tp1javafx;
-
 import javafx.application.Application;
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.scene.text.Text;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 public class HelloApplication extends Application {
     @Override
@@ -23,7 +28,7 @@ public class HelloApplication extends Application {
         Label civilite = new Label("Civilité");
 
         //Creation de la combobox et de la checkbox
-        CheckBox checkbox = new CheckBox("Je souhaite recevoir des offres commerciales");
+        CheckBox checkbox = new CheckBox("J'accepte les conditions d'utilisation de la newsletter");
         ComboBox civiliteBox = new ComboBox();
 
 
@@ -32,14 +37,17 @@ public class HelloApplication extends Application {
         Label prenom = new Label("Prénom");
         Label email = new Label("Email");
         Label Confimation = new Label("Confirmer votre email");
-        Label souscriptionreussie = new Label("Souscrivez à notre newsletter");
+        Label souscriptionreussie = new Label("Utilisateur  non inscrit");
 
         // creation des labels d'erreur
-        Label erreurNom = new Label("Veuillez remplir le champ nom");
-        Label erreurPrenom = new Label("Veuillez remplir le champ prenom");
-        Label erreurEmail = new Label("Veuillez remplir le champ email");
-        Label erreurConfirmation = new Label("Veuillez remplir le champ confirmation");
-        Label erreurCheckbox = new Label("Veuillez cocher la case");
+        Label erreurNom = new Label("Le nom est obligatoire");
+        Label erreurPrenom = new Label("Le prénom est obligatoire");
+        Label erreurEmail = new Label("L'email est obligatoire");
+        Label erreurConfirmation = new Label("La verification du mail est obligatoire");
+        Label erreurCheckbox = new Label("Il faut accepter les conditions d'utilisation");
+        Label erreurvalidite = new Label("L'email n'est pas valide");
+        Label erreuridentique = new Label("Les deux emails ne sont pas identiques");
+
 
         //Creation des textfield
         TextField nomField = new TextField();
@@ -79,12 +87,7 @@ public class HelloApplication extends Application {
         erreurConfirmation.setStyle("-fx-text-fill: red");
         erreurCheckbox.setStyle("-fx-text-fill: red");
 
-        //changer le label souscription avec les informations saisies dans les textfield quand on clique sur le bouton souscrire et que tous les champs sont remplis
-        souscrire.setOnMouseClicked(e -> {
-            if (!nomField.getText().isEmpty() && !prenomField.getText().isEmpty() && !emailField.getText().isEmpty() && !confirmationField.getText().isEmpty() && checkbox.isSelected()) {
-                souscriptionreussie.setText("Vous vous êtes souscrit avec les informations suivantes : " + civiliteBox.getValue() + " " + nomField.getText() + " " + prenomField.getText() + " " + emailField.getText());
-            }
-        });
+
 
         //Ajout des elements dans la grille
         grilleDesInfos.add(civilite, 0, 0);
@@ -106,10 +109,14 @@ public class HelloApplication extends Application {
         grilleDesInfos.add(erreurConfirmation, 1, 7);
         grilleDesInfos.add(erreurCheckbox, 0, 9);
 
+        grilleDesInfos.add(erreurvalidite, 0, 10);
+        grilleDesInfos.add(erreuridentique, 0, 11);
+
         grilleDesInfos.add(checkbox, 0, 8);
 
         //Ajout des elements dans la combobox
         civiliteBox.getItems().addAll("M", "F", "X");
+
         //Mettre un element par defaut
         civiliteBox.setValue("M");
 
@@ -128,16 +135,22 @@ public class HelloApplication extends Application {
         erreurEmail.setVisible(false);
         erreurConfirmation.setVisible(false);
         erreurCheckbox.setVisible(false);
+        erreurvalidite.setVisible(false);
+        erreuridentique.setVisible(false);
 
+        //attacher un eventHAdler et eventFilter au bouton souscrire
+        souscrire.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> System.out.println("Vous avez cliqué sur le bouton souscrire"));
 
-
-        //afficher le label souscriptionreussie en dessous du bouton souscrire quand on clique sur le bouton souscrire et que tous les champs sont remplis
-        souscrire.setOnAction(e -> {
-            if (!nomField.getText().isEmpty() && !prenomField.getText().isEmpty() && !emailField.getText().isEmpty() && !confirmationField.getText().isEmpty()) {
-                layout.setBottom(souscriptionreussie);
+        //afficher le label souscrire uniquement si les champs sont remplis , et que les emails sont identiques et valides et que la checkbox est cochée
+        souscrire.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
+            if (nomField.getText().isEmpty() || prenomField.getText().isEmpty() || emailField.getText().isEmpty() || confirmationField.getText().isEmpty() || !checkbox.isSelected() || !emailField.getText().matches("^[A-Za-z0-9+_.-]+@(.+)$") || !emailField.getText().equals(confirmationField.getText())) {
+                souscriptionreussie.setVisible(false);
+            } else {
+                //faire un message souscription reussie avec tous les champs remplis et la date d'aujourd'hui
+                souscriptionreussie.setText(  civiliteBox.getValue() + " " + nomField.getText() + " " + prenomField.getText() + " " + emailField.getText() +   "  s'est inscrit(e) le " + LocalDate.now() + " à " + LocalTime.now());
+                souscriptionreussie.setVisible(true);
             }
         });
-
 
         //afficher les labels d'erreur en fonction des champs remplis
         souscrire.setOnAction(e -> {
@@ -164,9 +177,18 @@ public class HelloApplication extends Application {
                 erreurCheckbox.setVisible(true);
             } else {
                 erreurCheckbox.setVisible(false);
+            }if (!emailField.getText().matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+                erreurvalidite.setVisible(true);
+            } else {
+                erreurvalidite.setVisible(false);
+            }    if (!emailField.getText().equals(confirmationField.getText())) {
+                erreuridentique.setVisible(true);
+            } else {
+                erreuridentique.setVisible(false);
             }
 
         });
+
 
 
         //Creation de la scene
