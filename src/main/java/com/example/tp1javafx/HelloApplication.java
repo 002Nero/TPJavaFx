@@ -28,7 +28,7 @@ public class HelloApplication extends Application {
         Label civilite = new Label("Civilité");
 
         //Creation de la combobox et de la checkbox
-        CheckBox checkbox = new CheckBox("J'accepte les conditions d'utilisation de la newsletter");
+        CheckBox checkbox = new CheckBox("Accepter les CGU du newsletter");
         ComboBox civiliteBox = new ComboBox();
 
 
@@ -44,7 +44,7 @@ public class HelloApplication extends Application {
         Label erreurPrenom = new Label("Le prénom est obligatoire");
         Label erreurEmail = new Label("L'email est obligatoire");
         Label erreurConfirmation = new Label("La verification du mail est obligatoire");
-        Label erreurCheckbox = new Label("Il faut accepter les conditions d'utilisation");
+        Label erreurCheckbox = new Label("Il faut accepter les CGU");
         Label erreurvalidite = new Label("L'email n'est pas valide");
         Label erreuridentique = new Label("Les deux emails ne sont pas identiques");
 
@@ -128,6 +128,9 @@ public class HelloApplication extends Application {
         //mettre une taille max aux textfield
         nomField.setMaxWidth(200);
         emailField.setMaxWidth(200);
+        prenomField.setMaxWidth(250);
+        confirmationField.setMaxWidth(250);
+        checkbox.setMaxWidth(200);
 
         //faire disparaitre les labels d'erreur quand on clique sur le textfield
         erreurNom.setVisible(false);
@@ -140,6 +143,7 @@ public class HelloApplication extends Application {
 
         //attacher un eventHAdler et eventFilter au bouton souscrire
         souscrire.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> System.out.println("Vous avez cliqué sur le bouton souscrire"));
+
 
         //afficher le label souscrire uniquement si les champs sont remplis , et que les emails sont identiques et valides et que la checkbox est cochée
         souscrire.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
