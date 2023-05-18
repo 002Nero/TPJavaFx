@@ -1,4 +1,4 @@
-package com.example.tp1javafx;
+package com.example.Orchad;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
