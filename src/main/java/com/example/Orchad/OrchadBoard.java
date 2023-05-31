@@ -5,10 +5,12 @@ import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
@@ -18,7 +20,13 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
 import java.io.FileNotFoundException;
+import java.lang.reflect.GenericDeclaration;
+import java.util.ArrayList;
+import java.util.EmptyStackException;
 import java.util.Random;
+
+import static javafx.scene.paint.Color.RED;
+
 
 public class OrchadBoard extends Application {
     @Override
@@ -31,6 +39,7 @@ public class OrchadBoard extends Application {
 
         //creating of the gridpanes for the orchad on the right
         GridPane orchad = new GridPane();
+
 
 
         //labels creation for the orchad
@@ -63,9 +72,14 @@ public class OrchadBoard extends Application {
         imageView.setTranslateY(-100);
 
 
-        //creating a square for the dice and putting it in the center of the vbox
-        Rectangle dice = new Rectangle(150, 150);
-        dice.setFill(Color.WHITE);
+        //instancie dice avec la classe dice
+        HelloController.dice dice1 = new HelloController.dice();
+        HelloController.dice numberOfFruit = new HelloController.dice();
+
+
+//        Rectangle dice = new Rectangle(150, 150);
+//        dice.setFill(Color.WHITE);
+
 
         //putting the label in the center of the vbox on the book image
         turnNumber.setAlignment(Pos.CENTER);
@@ -91,7 +105,7 @@ public class OrchadBoard extends Application {
 
         //met le de au milieu de la vbox
         leftVbox.setAlignment(Pos.CENTER);
-        leftVbox.getChildren().add(dice);
+        leftVbox.getChildren().add(dice1);
 
 
         //create hbox to put all the buttons in the left vbox
@@ -141,7 +155,7 @@ public class OrchadBoard extends Application {
 
 
         //i want to see the gridpanes borders
-        orchad.setGridLinesVisible(true);
+        orchad.setGridLinesVisible(true); //TODO: remove this line when the game is finished
 
 
         //make the gridpanes fits the size of the vbox
@@ -180,6 +194,8 @@ public class OrchadBoard extends Application {
         orchad.add(plumGrid, 1, 2);
         orchad.add(cherryGrid, 2, 1);
 
+
+
         BorderPane appleShulker = new BorderPane();
         BorderPane pearShulker = new BorderPane();
         BorderPane plumShulker = new BorderPane();
@@ -188,6 +204,24 @@ public class OrchadBoard extends Application {
         orchad.add(pearShulker, 2, 0);
         orchad.add(plumShulker, 0, 2);
         orchad.add(cherryShulker, 2, 2);
+
+
+        GridPane EndreCrowGon = new GridPane();
+        orchad.add(EndreCrowGon, 1, 1);
+
+
+        //placing the crow
+        EndreCrowGon.add(new ImageView(new Image("file:endreCrow.png",83,83,false,true)), 0, 0);
+        EndreCrowGon.add(new ImageView(new Image("file:endreCrow.png",83,83,false,true)), 1, 1);
+        EndreCrowGon.add(new ImageView(new Image("file:endreCrow.png",83,83,false,true)), 2, 2);
+        EndreCrowGon.add(new ImageView(new Image("file:endreCrow.png",83,83,false,true)), 0, 2);
+        EndreCrowGon.add(new ImageView(new Image("file:endreCrow.png",83,83,false,true)), 2, 0);
+        EndreCrowGon.add(new ImageView(new Image("file:endreCrow.png",83,83,false,true)), 1, 0);
+        EndreCrowGon.add(new ImageView(new Image("file:endreCrow.png",83,83,false,true)), 0, 1);
+        EndreCrowGon.add(new ImageView(new Image("file:endreCrow.png",83,83,false,true)), 2, 1);
+        EndreCrowGon.add(new ImageView(new Image("file:endreCrow.png",83,83,false,true)), 1, 2);
+
+
 
         //make the gridpanes 3x3
         ColumnConstraints columnConstraints1 = new ColumnConstraints();
@@ -203,6 +237,7 @@ public class OrchadBoard extends Application {
             plumGrid.getRowConstraints().add(rowConstraints1);
             cherryGrid.getColumnConstraints().add(columnConstraints1);
             cherryGrid.getRowConstraints().add(rowConstraints1);
+
         }
 
         //put in the middle of the gridpanes for shulkers  the images of shulkers
@@ -222,7 +257,7 @@ public class OrchadBoard extends Application {
         plumNbFruit.setFont(Font.font("Verdana", FontWeight.BOLD, 30));
         plumNbFruit.setTextFill(Color.BLUE);
         cherryNbFruit.setFont(Font.font("Verdana", FontWeight.BOLD, 30));
-        cherryNbFruit.setTextFill(Color.RED);
+        cherryNbFruit.setTextFill(RED);
         pearNbFruit.setFont(Font.font("Verdana", FontWeight.BOLD, 30));
         pearNbFruit.setTextFill(Color.YELLOW);
 
@@ -263,17 +298,7 @@ public class OrchadBoard extends Application {
         }
 
 
-        //enum for the fruits witch attribuates a number to each fruit
-        enum Fruit {
-            APPLE(1), PLUM(2), PEAR(3), CHERRY(4);
-            private int value;
-            Fruit(int value) {
-                this.value = value;
-            }
-            public int getValue() {
-                return value;
-            }
-        }
+
 
 
 
@@ -287,79 +312,230 @@ public class OrchadBoard extends Application {
             @Override
             public void handle(ActionEvent actionEvent) {
                 //creating a random number between 1 and 4
-                int random = new Random().nextInt(4) + 1;
+                int random = new Random().nextInt(6) + 1;
+                ArrayList<Node> nodes = new ArrayList<Node>();
+
+
+                dice1.setSelected(false);
                 switch (random) {
-                    case 1 :
-                        dice.setFill(new ImagePattern(new Image("file:apple.png")));
-                        appleGrid.getChildren().remove(0);
-                        //change the Label of the number of fruit to add +1 to the score
-                        appleNbFruit.setText(String.valueOf(Integer.parseInt(appleNbFruit.getText()) + 1));
-                        //si le label est superieur a 0 on change l'image de la shulker box
-                        if (Integer.parseInt(appleNbFruit.getText()) > 0) {
-                            appleShulker.getChildren().remove(0);
-                            appleShulker.setCenter(new ImageView(new Image("file:shulker_open_Green2.png", 170, 170, false, true)));
+                    case 1:
+                        dice1.setFill(new ImagePattern(new Image("file:apple.png")));
+                        //import pickAFruitAndRemoveItFromTheTree
+                        start.setDisable(true);
+                        //import pickAFruitAndRemoveItFromTheTree
+                        for (Node node : appleGrid.getChildren()) {
+                            if (node instanceof ImageView) {
+                                nodes.add(node);
+                            }
+                        }
+                        nodes.forEach(node1 -> {
+                            node1.setOnMouseClicked(event1 -> {
+                                System.out.println(String.valueOf(Integer.parseInt(appleNbFruit.getText()) + 1));
+                                //fait une condition pour qu'il prenne qu'un seul fruit
+
+
+                                if (dice1.getSelected() == false) {
+                                    imageView.setImage(null);
+                                    appleNbFruit.setText(String.valueOf(Integer.parseInt(appleNbFruit.getText()) + 1));
+                                    dice1.setSelected(true);
+                                    if (Integer.parseInt(appleNbFruit.getText()) > 0) {
+                                        appleShulker.getChildren().remove(0);
+                                        appleShulker.setCenter(new ImageView(new Image("file:shulker_open_green2.png", 170, 170, false, true)));
+
+                                    }
+                                    start.setDisable(false);
+                                    nodes.forEach(node2 -> {
+                                        node2.removeEventFilter(MouseEvent.MOUSE_CLICKED, MouseEvent::consume);
+                                    });
+
+                                }
+                                else {
+                                    System.out.println("You can only pick one fruit");
+                                }
+                            });
+
+                        });
+                        break;
+
+
+
+                    case 2:
+                        dice1.setFill(new ImagePattern(new Image("file:plum.png")));
+                        //import pickAFruitAndRemoveItFromTheTree
+                        start.setDisable(true);
+                        //import pickAFruitAndRemoveItFromTheTree
+                        for (Node node1 : plumGrid.getChildren()) {
+                            if (node1 instanceof ImageView) {
+                                //create bool varaiable to make sure that the player can only take one fruit
+
+                                ImageView imageView = (ImageView) node1;
+                                imageView.setOnMouseClicked(event -> {
+                                    System.out.println(String.valueOf(Integer.parseInt(plumNbFruit.getText()) + 1));
+                                    //fait une condition pour qu'il prenne qu'un seul fruit
+                                    if (dice1.getSelected() == false) {
+                                        imageView.setImage(null);
+                                        plumNbFruit.setText(String.valueOf(Integer.parseInt(plumNbFruit.getText()) + 1));
+                                        dice1.setSelected(true);
+                                        if (Integer.parseInt(plumNbFruit.getText()) > 0) {
+                                            plumShulker.getChildren().remove(0);
+                                            plumShulker.setCenter(new ImageView(new Image("file:shulker_open_Blue2.png", 170, 170, false, true)));
+
+                                        }
+                                        start.setDisable(false);
+                                    }
+                                    else {
+                                        System.out.println("You can only pick one fruit");
+                                    }
+
+                                });
+
+                            }
+
+                        }
+                        break;
+
+                    case 3:
+                        dice1.setFill(new ImagePattern(new Image("file:pear.png")));
+                        //import pickAFruitAndRemoveItFromTheTree
+                        start.setDisable(true);
+                        //import pickAFruitAndRemoveItFromTheTree
+                        for (Node node2 : pearGrid.getChildren()) {
+                            if (node2 instanceof ImageView) {
+                                //create bool varaiable to make sure that the player can only take one fruit
+
+                                ImageView imageView = (ImageView) node2;
+                                imageView.setOnMouseClicked(event -> {
+                                    System.out.println(String.valueOf(Integer.parseInt(pearNbFruit.getText()) + 1));
+                                    //fait une condition pour qu'il prenne qu'un seul fruit
+                                    if (dice1.getSelected() == false) {
+                                        imageView.setImage(null);
+                                        pearNbFruit.setText(String.valueOf(Integer.parseInt(pearNbFruit.getText()) + 1));
+                                        dice1.setSelected(true);
+                                        if (Integer.parseInt(pearNbFruit.getText()) > 0) {
+                                            pearShulker.getChildren().remove(0);
+                                            pearShulker.setCenter(new ImageView(new Image("file:shulker_open_yellow2.png", 170, 170, false, true)));
+
+                                        }
+                                        start.setDisable(false);
+                                    }
+                                    else {
+                                        System.out.println("You can only pick one fruit");
+                                    }
+
+                                });
+
+                            }
+
+                        }
+                        break;
+                    case 4:
+                        dice1.setFill(new ImagePattern(new Image("file:cherry.png")));
+                        //import pickAFruitAndRemoveItFromTheTree
+                        //desactivate button until the player pick a fruit
+                        start.setDisable(true);
+
+
+                        //import pickAFruitAndRemoveItFromTheTree
+                        for (Node node3 : cherryGrid.getChildren()) {
+                            if (node3 instanceof ImageView) {
+                                //create bool varaiable to make sure that the player can only take one fruit
+
+                                ImageView imageView = (ImageView) node3;
+                                imageView.setOnMouseClicked(event -> {
+                                    System.out.println(String.valueOf(Integer.parseInt(cherryNbFruit.getText()) + 1));
+                                    //fait une condition pour qu'il prenne qu'un seul fruit
+
+                                    if (dice1.getSelected() == false) {
+                                        imageView.setImage(null);
+                                        cherryNbFruit.setText(String.valueOf(Integer.parseInt(cherryNbFruit.getText()) + 1));
+                                        dice1.setSelected(true);
+                                        if (Integer.parseInt(cherryNbFruit.getText()) > 0) {
+                                            cherryShulker.getChildren().remove(0);
+                                            cherryShulker.setCenter(new ImageView(new Image("file:shulker_open_red2.png", 170, 170, false, true)));
+
+                                        }
+                                    start.setDisable(false);
+                                    }
+                                    else {
+                                        System.out.println("You can only pick one fruit");
+                                    }
+
+                                });
+
+                            }
+
+                        }
+                        break;
+
+                    case 5:
+
+                        dice1.setFill(new ImagePattern(new Image("file:endreCrowDice.png")));
+                        int randomcolunm = new Random().nextInt(3);
+                        int randomligne = new Random().nextInt(3);
+                        //add fx background color to the case
+                        EndreCrowGon.add(new ImageView(new Image("file:endreCrowChances.png",83,83,false,true)), randomcolunm, randomligne);
+
+
+                        //si la case est deja prise on relance le random
+                        if (EndreCrowGon.getChildren().contains(EndreCrowGon.getChildren().get(0))) {
+                            EndreCrowGon.getChildren().remove(0);
+                            randomcolunm = new Random().nextInt(3);
+                            randomligne = new Random().nextInt(3);
+                            EndreCrowGon.add(new ImageView(new Image("file:endreCrowChances.png", 83, 83, false, true)), randomcolunm, randomligne);
+                        }
+                        break;
+
+
+                    case 6:
+                        int counOfFruitYouPick = 0;
+                        dice1.setFill(new ImagePattern(new Image("file:bookTurn.png")));
+                        //make any fruit pickable
+                        //import pickAFruitAndRemoveItFromTheTree
+                        //desactivate button until the player pick a fruit
+                        start.setDisable(true);
+                        //nake the player pick any fruit he wants
+                        for (Node node4 : appleGrid.getChildren()) {
+                            if (node4 instanceof ImageView) {
+                                //create bool varaiable to make sure that the player can only take one fruit
+
+                                ImageView imageView = (ImageView) node4;
+                                imageView.setOnMouseClicked(event -> {
+                                    System.out.println(String.valueOf(Integer.parseInt(appleNbFruit.getText()) + 1));
+                                    //fait une condition pour qu'il prenne deux fruits
+
+                                    while (dice1.getSelected() == false && dice1.getNbFruitPicked() != 2) {
+                                        imageView.setImage(null);
+                                         //add one to the count of fruit you pick
+                                        dice1.setSelected(true);
+                                        //ajoute +1 a la variable qui compte le nombre de fruit que tu as pris
+                                        dice1.setNbFruitPicked(dice1.getNbFruitPicked() + 1);
+                                        if (Integer.parseInt(appleNbFruit.getText()) > 0) {
+                                            appleShulker.getChildren().remove(0);
+                                            appleShulker.setCenter(new ImageView(new Image("file:shulker_open_green2.png", 170, 170, false, true)));
+
+                                        }
+
+                                    }
+                                    if (dice1.getNbFruitPicked() == 2) {
+                                        System.out.println("You can only pick two fruits");
+                                        start.setDisable(false);
+                                    }
+
+                                });
+
+                            }
 
                         }
 
 
-
-
-
-
-
-                        break;
-                    case 2 :
-                        dice.setFill(new ImagePattern(new Image("file:plum.png")));
-                        plumGrid.getChildren().remove(0);
-                        plumNbFruit.setText(String.valueOf(Integer.parseInt(plumNbFruit.getText()) + 1));
-                        if (Integer.parseInt(plumNbFruit.getText()) > 0) {
-                            plumShulker.getChildren().remove(0);
-                            plumShulker.setCenter(new ImageView(new Image("file:shulker_open_Blue2.png", 170, 170, false, true)));
-
-                        }
-                        break;
-
-                    case 3 :
-                        dice.setFill(new ImagePattern(new Image("file:pear.png")));
-                        pearGrid.getChildren().remove(0);
-                        pearNbFruit.setText(String.valueOf(Integer.parseInt(pearNbFruit.getText()) + 1));
-                        if (Integer.parseInt(pearNbFruit.getText()) > 0) {
-                            pearShulker.getChildren().remove(0);
-                            pearShulker.setCenter(new ImageView(new Image("file:shulker_open_yellow2.png", 170, 170, false, true)));
-
-                        }
-                        break;
-                    case 4 :
-                        dice.setFill(new ImagePattern(new Image("file:cherry.png")));
-                        cherryGrid.getChildren().remove(0);
-                        cherryNbFruit.setText(String.valueOf(Integer.parseInt(cherryNbFruit.getText()) + 1));
-                        if (Integer.parseInt(cherryNbFruit.getText()) > 0) {
-                            cherryShulker.getChildren().remove(0);
-                            cherryShulker.setCenter(new ImageView(new Image("file:shulker_open_red2.png", 170, 170, false, true)));
-
-                        }
-                        break;
-
-                    default:
-                        System.out.println("error");
                         break;
 
                 }
 
+        }
 
+    });
 
-                //if a fruit is already remove roll the dice until there is one
-                if (appleGrid.getChildren().isEmpty() && plumGrid.getChildren().isEmpty() && pearGrid.getChildren().isEmpty() && cherryGrid.getChildren().isEmpty()) {
-                    dice.setFill(Color.TRANSPARENT);
-                }
-
-
-
-            }
-
-
-
-        });
 
 
 
