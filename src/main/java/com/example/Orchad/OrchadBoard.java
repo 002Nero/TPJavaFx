@@ -313,7 +313,7 @@ public class OrchadBoard extends Application {
             public void handle(ActionEvent actionEvent) {
                 //creating a random number between 1 and 4
                 int random = new Random().nextInt(6) + 1;
-                ArrayList<Node> nodes = new ArrayList<Node>();
+
 
 
                 dice1.setSelected(false);
@@ -322,40 +322,28 @@ public class OrchadBoard extends Application {
                         dice1.setFill(new ImagePattern(new Image("file:apple.png")));
                         //import pickAFruitAndRemoveItFromTheTree
                         start.setDisable(true);
-                        //import pickAFruitAndRemoveItFromTheTree
-                        for (Node node : appleGrid.getChildren()) {
-                            if (node instanceof ImageView) {
-                                nodes.add(node);
+                        //Fait en sorte que le joueur ne puisse prendre qu'un seul fruit dans l'arbre apple en cliquant sur l'image
+                        for (Node node1 : appleGrid.getChildren()) {
+                            if (node1 instanceof ImageView) {
+                                //create bool varaiable to make sure that the player can only take one fruit
+
+                                ImageView imageView = (ImageView) node1;
+                                imageView.setOnMouseClicked(event -> {
+                                    System.out.println(String.valueOf(Integer.parseInt(appleNbFruit.getText()) + 1));
+                                    //fait une condition pour qu'il prenne qu'un seul fruit
+                                    if (dice1.getSelected() == false) {
+                                        imageView.setImage(null);
+                                        appleNbFruit.setText(String.valueOf(Integer.parseInt(appleNbFruit.getText()) + 1));
+                                        dice1.setSelected(true);
+                                        if (Integer.parseInt(appleNbFruit.getText()) == 4) {
+                                            appleShulker.setCenter(null);
+                                            appleNbFruit.setText("0");
+                                            start.setDisable(false);
+                                        }
+                                    }
+                                });
                             }
                         }
-                        nodes.forEach(node1 -> {
-                            node1.setOnMouseClicked(event1 -> {
-                                System.out.println(String.valueOf(Integer.parseInt(appleNbFruit.getText()) + 1));
-                                //fait une condition pour qu'il prenne qu'un seul fruit
-
-
-                                if (dice1.getSelected() == false) {
-                                    imageView.setImage(null);
-                                    appleNbFruit.setText(String.valueOf(Integer.parseInt(appleNbFruit.getText()) + 1));
-                                    dice1.setSelected(true);
-                                    if (Integer.parseInt(appleNbFruit.getText()) > 0) {
-                                        appleShulker.getChildren().remove(0);
-                                        appleShulker.setCenter(new ImageView(new Image("file:shulker_open_green2.png", 170, 170, false, true)));
-
-                                    }
-                                    start.setDisable(false);
-                                    nodes.forEach(node2 -> {
-                                        node2.removeEventFilter(MouseEvent.MOUSE_CLICKED, MouseEvent::consume);
-                                    });
-
-                                }
-                                else {
-                                    System.out.println("You can only pick one fruit");
-                                }
-                            });
-
-                        });
-                        break;
 
 
 
@@ -364,11 +352,11 @@ public class OrchadBoard extends Application {
                         //import pickAFruitAndRemoveItFromTheTree
                         start.setDisable(true);
                         //import pickAFruitAndRemoveItFromTheTree
-                        for (Node node1 : plumGrid.getChildren()) {
-                            if (node1 instanceof ImageView) {
+                        for (Node node2 : plumGrid.getChildren()) {
+                            if (node2 instanceof ImageView) {
                                 //create bool varaiable to make sure that the player can only take one fruit
 
-                                ImageView imageView = (ImageView) node1;
+                                ImageView imageView = (ImageView) node2;
                                 imageView.setOnMouseClicked(event -> {
                                     System.out.println(String.valueOf(Integer.parseInt(plumNbFruit.getText()) + 1));
                                     //fait une condition pour qu'il prenne qu'un seul fruit
@@ -399,11 +387,11 @@ public class OrchadBoard extends Application {
                         //import pickAFruitAndRemoveItFromTheTree
                         start.setDisable(true);
                         //import pickAFruitAndRemoveItFromTheTree
-                        for (Node node2 : pearGrid.getChildren()) {
-                            if (node2 instanceof ImageView) {
+                        for (Node node3 : pearGrid.getChildren()) {
+                            if (node3 instanceof ImageView) {
                                 //create bool varaiable to make sure that the player can only take one fruit
 
-                                ImageView imageView = (ImageView) node2;
+                                ImageView imageView = (ImageView) node3;
                                 imageView.setOnMouseClicked(event -> {
                                     System.out.println(String.valueOf(Integer.parseInt(pearNbFruit.getText()) + 1));
                                     //fait une condition pour qu'il prenne qu'un seul fruit
@@ -436,13 +424,13 @@ public class OrchadBoard extends Application {
 
 
                         //import pickAFruitAndRemoveItFromTheTree
-                        for (Node node3 : cherryGrid.getChildren()) {
-                            if (node3 instanceof ImageView) {
+                        for (Node node4 : cherryGrid.getChildren()) {
+                            if (node4 instanceof ImageView) {
                                 //create bool varaiable to make sure that the player can only take one fruit
 
-                                ImageView imageView = (ImageView) node3;
+                                ImageView imageView = (ImageView) node4;
                                 imageView.setOnMouseClicked(event -> {
-                                    System.out.println(String.valueOf(Integer.parseInt(cherryNbFruit.getText()) + 1));
+                                    System.out.println("Number of cherry"+String.valueOf(Integer.parseInt(cherryNbFruit.getText()) + 1));
                                     //fait une condition pour qu'il prenne qu'un seul fruit
 
                                     if (dice1.getSelected() == false) {
@@ -469,74 +457,59 @@ public class OrchadBoard extends Application {
 
                     case 5:
 
-                        dice1.setFill(new ImagePattern(new Image("file:endreCrowDice.png")));
                         int randomcolunm = new Random().nextInt(3);
                         int randomligne = new Random().nextInt(3);
+                        dice1.setFill(new ImagePattern(new Image("file:endreCrowDice.png")));
+
                         //add fx background color to the case
-                        EndreCrowGon.add(new ImageView(new Image("file:endreCrowChances.png",83,83,false,true)), randomcolunm, randomligne);
+                         EndreCrowGon.add(new ImageView(new Image("file:endreCrowChances.png",83,83,false,true)), randomcolunm, randomligne);
 
 
                         //si la case est deja prise on relance le random
-                        if (EndreCrowGon.getChildren().contains(EndreCrowGon.getChildren().get(0))) {
-                            EndreCrowGon.getChildren().remove(0);
-                            randomcolunm = new Random().nextInt(3);
-                            randomligne = new Random().nextInt(3);
+                        if (EndreCrowGon.getChildren().contains(EndreCrowGon.getChildren().get(randomligne * randomcolunm))) {
+                            EndreCrowGon.getChildren().remove(randomligne, randomcolunm);
+                            randomcolunm = new Random().nextInt(3)+1;
+                            randomligne = new Random().nextInt(3)+1;
                             EndreCrowGon.add(new ImageView(new Image("file:endreCrowChances.png", 83, 83, false, true)), randomcolunm, randomligne);
+                            dice1.setDisable(false);
                         }
                         break;
 
 
                     case 6:
-                        int counOfFruitYouPick = 0;
+                        final int[] countOfFruitPicked = {0};
                         dice1.setFill(new ImagePattern(new Image("file:bookTurn.png")));
-                        //make any fruit pickable
-                        //import pickAFruitAndRemoveItFromTheTree
-                        //desactivate button until the player pick a fruit
                         start.setDisable(true);
-                        //nake the player pick any fruit he wants
-                        for (Node node4 : appleGrid.getChildren()) {
-                            if (node4 instanceof ImageView) {
-                                //create bool varaiable to make sure that the player can only take one fruit
 
-                                ImageView imageView = (ImageView) node4;
-                                imageView.setOnMouseClicked(event -> {
-                                    System.out.println(String.valueOf(Integer.parseInt(appleNbFruit.getText()) + 1));
-                                    //fait une condition pour qu'il prenne deux fruits
+// Ajoute un événement de clic à toutes les images de fruits des arbres
+                        for (Node tree : orchad.getChildren()) {
+                            if (tree instanceof GridPane) {
+                                GridPane treeGridPane = (GridPane) tree;
+                                for (Node node : treeGridPane.getChildren()) {
+                                    if (node instanceof ImageView) {
+                                        ImageView imageView = (ImageView) node;
+                                        imageView.setOnMouseClicked(event -> {
+                                            if (countOfFruitPicked[0] < 2) {
+                                                imageView.setImage(null);
+                                                countOfFruitPicked[0]++;
+                                                System.out.println("Number of fruits picked: " + countOfFruitPicked[0]);
 
-                                    while (dice1.getSelected() == false && dice1.getNbFruitPicked() != 2) {
-                                        imageView.setImage(null);
-                                         //add one to the count of fruit you pick
-                                        dice1.setSelected(true);
-                                        //ajoute +1 a la variable qui compte le nombre de fruit que tu as pris
-                                        dice1.setNbFruitPicked(dice1.getNbFruitPicked() + 1);
-                                        if (Integer.parseInt(appleNbFruit.getText()) > 0) {
-                                            appleShulker.getChildren().remove(0);
-                                            appleShulker.setCenter(new ImageView(new Image("file:shulker_open_green2.png", 170, 170, false, true)));
-
-                                        }
-
+                                                if (countOfFruitPicked[0] == 2) {
+                                                    System.out.println("You can only pick two fruits");
+                                                    start.setDisable(false);
+                                                }
+                                            }
+                                        });
                                     }
-                                    if (dice1.getNbFruitPicked() == 2) {
-                                        System.out.println("You can only pick two fruits");
-                                        start.setDisable(false);
-                                    }
-
-                                });
-
+                                }
                             }
-
                         }
 
-
                         break;
+                                }
+                            }
 
-                }
-
-        }
-
-    });
-
-
+                        });
 
 
 
